@@ -50,6 +50,8 @@ for (const repo of repos) {
 		state,
 		"--limit",
 		"50",
+		"--search",
+		"sort:created-desc",
 		"--json",
 		"number,title,author,createdAt,updatedAt,state,url",
 		"--repo",
@@ -79,16 +81,16 @@ const filtered = prs
 		const created = new Date(pr.createdAt);
 		return created >= fromDate && created <= toDate;
 	})
-	.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+	.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 console.log(
 	`PRs from ${fromDate.toISOString()} to ${toDate.toISOString()}${repoInput ? ` in ${repoInput}` : ` across ${repos.length} repos`}: ${filtered.length}`,
 );
 
 for (const pr of filtered) {
-	console.log(
-		`- ${pr.repo}#${pr.number} [${pr.state}] ${pr.title} | @${pr.author?.login ?? "unknown"} | created: ${pr.createdAt} | ${pr.url}`,
-	);
+	// console.log( `- ${pr.repo}#${pr.number} [${pr.state}] ${pr.title} | @${pr.author?.login ?? "unknown"} | created: ${pr.createdAt} | ${pr.url}`);
+	console.log( `- [${pr.title}](${pr.url})`);
+
 }
 
 function getArgValue(name) {
