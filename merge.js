@@ -10,6 +10,7 @@ const DEFAULT_REPOS = [
 	"reactjs/react.dev",
 	"facebook/react",
 	"vercel/next.js",
+	"microsoft/typescript"
 ];
 
 const args = process.argv.slice(2);
