@@ -6,9 +6,7 @@ const { defaultFrom, defaultTo } = getDefaultTuesdayRangeUtc();
 const DEFAULT_REPOS = [
 	"tailwindlabs/tailwindcss.com",
 	"tailwindlabs/tailwindcss",
-	"mdn/content",
-	"reactjs/react.dev",
-	"facebook/react",
+	"react/react",
 	"vercel/next.js",
 	"microsoft/typescript"
 ];
