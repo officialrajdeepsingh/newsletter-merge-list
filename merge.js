@@ -75,10 +75,18 @@ for (const repo of repos) {
 	}
 }
 
+const seen = new Set();
 const filtered = prs
 	.filter((pr) => {
 		const created = new Date(pr.createdAt);
 		return created >= fromDate && created <= toDate;
+	})
+	.filter((pr) => {
+		if (seen.has(pr.url)) {
+			return false;
+		}
+		seen.add(pr.url);
+		return true;
 	})
 	.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -86,10 +94,19 @@ console.log(
 	`PRs from ${fromDate.toISOString()} to ${toDate.toISOString()}${repoInput ? ` in ${repoInput}` : ` across ${repos.length} repos`}: ${filtered.length}`,
 );
 
+const grouped = {};
 for (const pr of filtered) {
-	// console.log( `- ${pr.repo}#${pr.number} [${pr.state}] ${pr.title} | @${pr.author?.login ?? "unknown"} | created: ${pr.createdAt} | ${pr.url}`);
-	console.log( `- [${pr.title}](${pr.url})`);
+	if (!grouped[pr.repo]) {
+		grouped[pr.repo] = [];
+	}
+	grouped[pr.repo].push(pr);
+}
 
+for (const [repo, repoPrs] of Object.entries(grouped)) {
+	console.log(`\n## ${repo}`);
+	for (const pr of repoPrs) {
+		console.log(`- [${pr.title}](${pr.url})`);
+	}
 }
 
 function getArgValue(name) {
