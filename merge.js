@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const fs = require("node:fs");
 const { execFileSync } = require("node:child_process");
 
 const { defaultFrom, defaultTo } = getDefaultTuesdayRangeUtc();
@@ -90,9 +91,9 @@ const filtered = prs
 	})
 	.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-console.log(
+const outputLines = [
 	`PRs from ${fromDate.toISOString()} to ${toDate.toISOString()}${repoInput ? ` in ${repoInput}` : ` across ${repos.length} repos`}: ${filtered.length}`,
-);
+];
 
 const grouped = {};
 for (const pr of filtered) {
@@ -103,11 +104,16 @@ for (const pr of filtered) {
 }
 
 for (const [repo, repoPrs] of Object.entries(grouped)) {
-	console.log(`\n## ${repo}`);
+	outputLines.push(`\n## ${repo}`);
 	for (const pr of repoPrs) {
-		console.log(`- [${pr.title}](${pr.url})`);
+		outputLines.push(`- [${pr.title}](${pr.url})`);
 	}
 }
+
+const outputContent = outputLines.join("\n") + "\n";
+console.log(outputContent.trimEnd());
+
+fs.writeFileSync("README.md", outputContent, "utf8");
 
 function getArgValue(name) {
 	const index = args.indexOf(name);
